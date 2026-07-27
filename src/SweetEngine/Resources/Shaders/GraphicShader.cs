@@ -1,6 +1,6 @@
 namespace SweetEngine.Resources.Shaders;
 
-public struct Shader()
+public struct GraphicShader()
 {
     public string vertexSrc = @"
         #version 330 core
