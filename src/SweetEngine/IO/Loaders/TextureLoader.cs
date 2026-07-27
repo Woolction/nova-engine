@@ -10,31 +10,29 @@ using StbImageSharp;
 
 namespace SweetEngine.IO.Loaders;
 
-public unsafe struct Texture2DLoader
+public struct TextureLoader
 {
-    private readonly UnsafeDictionary<TextureType, uint> default_maps;
-    private readonly UnsafeDictionary<TextureType, TextureUnit> units;
+    public UnsafeDictionary<TextureType, uint> DefaultTextures;
+    public UnsafeDictionary<TextureType, TextureUnit> Units;
 
-    public Texture2DLoader()
+    public TextureLoader()
     {
-        default_maps = new(3)
-        {
-            [TextureType.BaseMap | TextureType.None] = CreateDefaultTexture(TextureType.BaseMap),
-            [TextureType.NormalMap] = CreateDefaultTexture(TextureType.NormalMap),
-            [TextureType.MetallicMap] = CreateDefaultTexture(TextureType.MetallicMap)
-        };
+        DefaultTextures = new UnsafeDictionary<TextureType, uint>(3);
 
-        units = new(3)
-        {
-            [TextureType.BaseMap] = TextureUnit.Texture0,
-            [TextureType.NormalMap] = TextureUnit.Texture1,
-            [TextureType.MetallicMap] = TextureUnit.Texture2
-        };
+        DefaultTextures[TextureType.BaseMap | TextureType.None] = CreateDefaultTexture(TextureType.BaseMap);
+        DefaultTextures[TextureType.NormalMap] = CreateDefaultTexture(TextureType.NormalMap);
+        DefaultTextures[TextureType.MetallicMap] = CreateDefaultTexture(TextureType.MetallicMap);
+
+        Units = new UnsafeDictionary<TextureType, TextureUnit>(3);
+
+        Units[TextureType.BaseMap] = TextureUnit.Texture0;
+        Units[TextureType.NormalMap] = TextureUnit.Texture1;
+        Units[TextureType.MetallicMap] = TextureUnit.Texture2;
     }
 
     public readonly Texture2D Load(TextureType format, string path)
     {
-        TextureUnit unit = units[format];
+        TextureUnit unit = Units[format];
         var gl = GraphicContext.GL;
 
         try
@@ -71,7 +69,7 @@ public unsafe struct Texture2DLoader
 
     public readonly Texture2D Load(TextureType format, ReadOnlySpan<byte> pixels, int width, int height)
     {
-        TextureUnit unit = units[format];
+        TextureUnit unit = Units[format];
         var gl = GraphicContext.GL;
 
         try
@@ -109,9 +107,9 @@ public unsafe struct Texture2DLoader
 
     public readonly Texture2D SetDefault(TextureType format)
     {
-        var id = default_maps[format];
+        var id = DefaultTextures[format];
 
-        return new Texture2D(id, 1, 1, units[format]);
+        return new Texture2D(id, 1, 1, Units[format]);
     }
 
     private readonly uint CreateDefaultTexture(TextureType TextureType)
@@ -161,7 +159,7 @@ public unsafe struct Texture2DLoader
 
     public void Dispose()
     {
-        default_maps.Dispose();
-        units.Dispose();
+        DefaultTextures.Dispose();
+        Units.Dispose();
     }
 }
