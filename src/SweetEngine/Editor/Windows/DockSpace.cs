@@ -1,7 +1,6 @@
 using SweetLib.Collections.Unsafe.List;
 using SweetEngine.Core.APIs;
 using ImGuiNET;
-using SweetLib.Devices;
 
 namespace SweetEngine.Editor.Windows;
 
