@@ -1,86 +1,118 @@
+using Shader = SweetEngine.Resources.Shader;
+
 using System.Numerics;
 using Silk.NET.OpenGL;
+using SweetLib.Devices;
 
 namespace SweetEngine.IO.Loaders;
 
-public struct ShaderLoader
+public unsafe struct ShaderLoader
 {
-    public uint Id { get; private set; }
-
-    private readonly GL gl;
-
-    public ShaderLoader(GL gl, string vertexSrc, string fragmentSrc)
+    public uint Load(in string vertexSrc, in string fragmentSrc)
     {
-        this.gl = gl;
+        var gl = GraphicContext.GL;
 
         uint vertex = gl.CreateShader(ShaderType.VertexShader);
         gl.ShaderSource(vertex, vertexSrc);
         gl.CompileShader(vertex);
-        CheckCompileErrors(vertex, "VERTEX");
+        CheckCompileErrors(gl, vertex, "VERTEX");
 
         uint fragment = gl.CreateShader(ShaderType.FragmentShader);
         gl.ShaderSource(fragment, fragmentSrc);
         gl.CompileShader(fragment);
-        CheckCompileErrors(fragment, "FRAGMENT");
+        CheckCompileErrors(gl, fragment, "FRAGMENT");
 
-        Id = gl.CreateProgram();
-        gl.AttachShader(Id, vertex);
-        gl.AttachShader(Id, fragment);
-        gl.LinkProgram(Id);
-        CheckLinkErrors(Id);
+        uint id = gl.CreateProgram();
+        gl.AttachShader(id, vertex);
+        gl.AttachShader(id, fragment);
+        gl.LinkProgram(id);
+        CheckLinkErrors(gl, id);
 
-        gl.DetachShader(Id, vertex);
-        gl.DetachShader(Id, fragment);
+        gl.DetachShader(id, vertex);
+        gl.DetachShader(id, fragment);
         gl.DeleteShader(vertex);
         gl.DeleteShader(fragment);
 
-        Console.WriteLine($"Program = {Id}");
-        gl.GetProgram(Id, ProgramPropertyARB.LinkStatus, out int linked);
+        return id;
     }
 
-    public void Use() => gl.UseProgram(Id);
-
-    public void SetInt(string name, int value)
+    private void CheckCompileErrors(GL gl, uint shader, string type)
     {
-        int loc = gl.GetUniformLocation(Id, name);
+        gl.GetShader(shader, ShaderParameterName.CompileStatus, out int status);
+        if (status == 0)
+        {
+            string info = gl.GetShaderInfoLog(shader);
+            Console.WriteLine($"ERROR::SHADER_COMPILATION_ERROR of type: {type}\n{info}\n");
+        }
+    }
+
+    private void CheckLinkErrors(GL gl, uint programId)
+    {
+        gl.GetProgram(programId, ProgramPropertyARB.LinkStatus, out int status);
+        if (status == 0)
+        {
+            string info = gl.GetProgramInfoLog(programId);
+            Console.WriteLine($"ERROR::PROGRAM_LINKING_ERROR\n{info}\n");
+        }
+    }
+
+    public void Delete(ref Shader shader)
+    {
+        if (shader.Id != 0)
+        {
+            GraphicContext.GL.DeleteProgram(shader.Id);
+            shader.Id = 0;
+        }
+    }
+
+    public void Use(Shader shader) => GraphicContext.GL.UseProgram(shader.Id);
+
+    public void SetInt(Shader shader, in string name, int value)
+    {
+        var gl = GraphicContext.GL;
+
+        int loc = gl.GetUniformLocation(shader.Id, name);
         gl.Uniform1(loc, value);
 
         CheckCurrentProgram(gl, name, loc);
     }
 
-    public void SetFloat(string name, float value)
+    public void SetFloat(Shader shader, in string name, float value)
     {
-        int loc = gl.GetUniformLocation(Id, name);
+        var gl = GraphicContext.GL;
+
+        int loc = gl.GetUniformLocation(shader.Id, name);
         gl.Uniform1(loc, value);
 
         CheckCurrentProgram(gl, name, loc);
     }
 
-    public void SetVector4(string name, Vector4 vec)
+    public void SetVector4(Shader shader, in string name, in Vector4 vec)
     {
-        int loc = gl.GetUniformLocation(Id, name);
+        var gl = GraphicContext.GL;
+
+        int loc = gl.GetUniformLocation(shader.Id, name);
         gl.Uniform4(loc, vec.X, vec.Y, vec.Z, vec.W);
 
         CheckCurrentProgram(gl, name, loc);
     }
 
-    public void SetVector3(string name, Vector3 vec)
+    public void SetVector3(Shader shader, in string name, in Vector3 vec)
     {
-        int loc = gl.GetUniformLocation(Id, name);
+        var gl = GraphicContext.GL;
+
+        int loc = gl.GetUniformLocation(shader.Id, name);
         gl.Uniform3(loc, vec.X, vec.Y, vec.Z);
 
         CheckCurrentProgram(gl, name, loc);
     }
 
-    public void SetMatrix4(string name, Matrix4x4 mat, bool transpose = false)
+    public void SetMatrix4(Shader shader, in string name, Matrix4x4* mat, bool transpose = false)
     {
-        int loc = gl.GetUniformLocation(Id, name);
+        var gl = GraphicContext.GL;
 
-        unsafe
-        {
-            gl.UniformMatrix4(loc, 1, transpose, (float*)&mat);
-        }
-
+        int loc = gl.GetUniformLocation(shader.Id, name);
+        gl.UniformMatrix4(loc, 1, transpose, (float*)mat);        
         CheckCurrentProgram(gl, name, loc);
     }
 
@@ -91,35 +123,6 @@ public struct ShaderLoader
          int currentProgram;
          gl.GetInteger(GetPName.CurrentProgram, out currentProgram);
 
-         Console.WriteLine($"Current = {currentProgram}, Expected = {Id}");*/
-    }
-
-    private void CheckCompileErrors(uint shader, string type)
-    {
-        gl.GetShader(shader, ShaderParameterName.CompileStatus, out int status);
-        if (status == 0)
-        {
-            string info = gl.GetShaderInfoLog(shader);
-            Console.WriteLine($"ERROR::SHADER_COMPILATION_ERROR of type: {type}\n{info}\n");
-        }
-    }
-
-    private void CheckLinkErrors(uint program)
-    {
-        gl.GetProgram(program, ProgramPropertyARB.LinkStatus, out int status);
-        if (status == 0)
-        {
-            string info = gl.GetProgramInfoLog(program);
-            Console.WriteLine($"ERROR::PROGRAM_LINKING_ERROR\n{info}\n");
-        }
-    }
-
-    public void Dispose()
-    {
-        if (Id != 0)
-        {
-            gl.DeleteProgram(Id);
-            Id = 0;
-        }
+         Console.WriteLine($"Current = {currentProgram}, Expected = {id}");*/
     }
 }
