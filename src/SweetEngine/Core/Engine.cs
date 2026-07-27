@@ -4,10 +4,11 @@ using SweetEngine.Editor;
 using SweetLib.Intents;
 using SweetLib.Devices;
 using SweetEngine.MDI;
+using SweetEngine.Core.APIs;
 
 namespace SweetEngine.Core;
 
-public unsafe struct Engine
+public unsafe ref struct Engine
 {
     public Device Device;
     public Intent Intent;
@@ -21,28 +22,38 @@ public unsafe struct Engine
     public EditorManager Editor;
     public GuiSystem Gui;
 
-    public void Init()
+    public Engine()
     {
         Device = new();
-        Device.Init();
-        
         Intent = new();
-        Intent.Init(GraphicContext.Window, GraphicContext.Glfw);
-
         Kitchen = new();
         Mixer = new();
-
         Renderer = new();
         Resource = new();
-
         Editor = new();
-        Editor.Init();
-
         Gui = new();
+    }
+
+    public void Init(in EngineContext context)
+    {
+        Device.Init();
+        Intent.Init(GraphicContext.Window, GraphicContext.Glfw);
+        Kitchen.Init(in context);
+        Mixer.Init();
+        Resource.Init();
+        Renderer.Init(in context);
+        Editor.Init();
+        Gui.Init(in context);
     }
 
     public void Dispose()
     {
         Intent.Dispose();
+
+        Kitchen.Dispose();
+
+        Mixer.Dispose();
+
+        Resource.Dispose();
     }
 }
