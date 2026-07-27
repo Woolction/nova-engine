@@ -1,13 +1,13 @@
-using SweetEngine.IO.Loaders;
 using SweetLib.Collections.Unsafe.Array;
-using SweetEngine.Graphics;
+using SweetEngine.IO.Loaders;
 using SweetEngine.Core.Enums;
+using SweetEngine.Resources;
 using System.Numerics;
 using Silk.NET.OpenGL;
 
-namespace SweetEngine.Resources;
+namespace SweetEngine.MDI.Ingredients;
 
-public unsafe struct Material
+public struct Material
 {
     public Vector4 Color;
 
@@ -15,7 +15,7 @@ public unsafe struct Material
 
     public UnsafeArray<Texture2D> Textures;
 
-    public Material(in Texture2DLoader loader)
+    public Material(in TextureLoader loader)
     {
         Textures = new UnsafeArray<Texture2D>(3);
 
