@@ -11,6 +11,7 @@ using SweetEngine.Graphics;
 using SweetLib.Devices;
 using SweetEngine.Core;
 using System.Numerics;
+using Sweet.Engine;
 
 
 namespace SweetEngine;
@@ -32,9 +33,6 @@ unsafe class Program
             var glfw = GraphicContext.Glfw;
             var gl = GraphicContext.GL;
 
-            DebugWindow.Window = &engine.Device.Window;
-            DebugWindow.Mouse = &engine.Device.Mouse;
-
             var _baseMap = context.Resource->TextureLoader.Load(TextureType.BaseMap, AssetDirectories.Textures + "/sakuya-Base_Color.png");
             var _normalMap = context.Resource->TextureLoader.Load(TextureType.NormalMap, AssetDirectories.Textures + "/sakuya-Normal.png");
             var _metallicMap = context.Resource->TextureLoader.Load(TextureType.MetallicMap, AssetDirectories.Textures + "/sakuya-Metallic.png");
@@ -52,14 +50,14 @@ unsafe class Program
             FrameBuffer* frameBuffer = (FrameBuffer*)NativeMemory.Alloc((nuint)sizeof(FrameBuffer)); 
             *frameBuffer = new FrameBuffer(640, 320);
 
-            CameraMixer* cameraMixer = (CameraMixer*)NativeMemory.Alloc((nuint)sizeof(CameraMixer)); 
-            *cameraMixer = new CameraMixer();
+            /*CameraMixer* cameraMixer = (CameraMixer*)NativeMemory.Alloc((nuint)sizeof(CameraMixer)); 
+            *cameraMixer = new CameraMixer();*/
 
-            OpenGL.cameraMixer = cameraMixer;
+            //OpenGL.cameraMixer = cameraMixer;
             OpenGL.frameBuffer = frameBuffer;
 
-            engine.Mixer.Life.cameraMixer = cameraMixer;
-            SceneWindow.Depends(frameBuffer, cameraMixer);
+            //engine.Mixer.Life.cameraMixer = cameraMixer;
+            SceneWindow.Depends(frameBuffer);
 
             while (!glfw.WindowShouldClose(window))
             {
@@ -84,11 +82,13 @@ unsafe class Program
                 Thread.Sleep(6);
             }
 
+            Generated.Hello();
+
             engine.Dispose();
 
             frameBuffer->Dispose();
 
-            NativeMemory.Free(cameraMixer);
+            //NativeMemory.Free(cameraMixer);
             NativeMemory.Free(frameBuffer);
 
             glfw.DestroyWindow(window);

@@ -13,7 +13,7 @@ public unsafe struct GuiSystem
         { 
             Init = &ImGUI.Init,
             Update = &ImGUI.Update,
-            Render = &ImGUI.Render
+            Render = &ImGUI.Render,
         };  
 
         API.Init(in context);
@@ -24,7 +24,7 @@ public unsafe struct GuiSystem
         API.Update(in context);
     }
 
-    public void Render(in EngineContext context)
+    public readonly void Render(in EngineContext context)
     {
         API.Render(in context);
     }

@@ -1,11 +1,15 @@
+using SweetLib.Generator.Attributes;
+using SweetLib.Generator.Enums;
+using SweetEngine.Core;
 using ImGuiNET;
-using SweetLib.Devices;
 
 namespace SweetEngine.Editor.Windows;
 
-public static class ConsoleWindow
+[Window]
+public struct ConsoleWindow
 {
-    public static void DrawImpl()
+    [Stage(EditorStages.Draw)]
+    public readonly void Draw(in EngineContext context)
     {
         ImGui.Begin("Console");
 

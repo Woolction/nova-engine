@@ -1,15 +1,14 @@
-using System.Numerics;
-using ImGuiNET;
-using Silk.NET.GLFW;
-using Silk.NET.OpenGL;
-using SweetEngine.Core;
+using SweetEngine.Resources.Shaders;
 using SweetEngine.Core.Enums;
-using SweetEngine.Editor.Windows;
 using SweetEngine.IO.Loaders;
 using SweetEngine.Resources;
-using SweetEngine.Resources.Shaders;
 using SweetLib.Devices;
 using SweetLib.Intents;
+using SweetEngine.Core;
+using System.Numerics;
+using Silk.NET.OpenGL;
+using Silk.NET.GLFW;
+using ImGuiNET;
 
 namespace SweetEngine.Editor;
 
@@ -18,7 +17,6 @@ public unsafe static class ImGUI
     private static Resources.Shader shader;
     private static Texture2D _fontTexture;
 
-    private static DockSpace dockSpace;
     private static GL gl;
 
     private static uint _vao;
@@ -33,8 +31,6 @@ public unsafe static class ImGUI
 
         shader = new Resources.Shader(
             in context.Resource->ShaderLoader, in guiShader.vertexSrc, in guiShader.fragmentSrc);
-
-        dockSpace = new DockSpace();
 
         ImGui.CreateContext();
         ImGui.StyleColorsDark();
@@ -54,7 +50,7 @@ public unsafe static class ImGUI
 
         ImGui.NewFrame();
 
-        dockSpace.Draw();
+        context.Editor->Draw(in context);
     }
 
     public static void Render(in EngineContext context)

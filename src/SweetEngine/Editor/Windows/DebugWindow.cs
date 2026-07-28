@@ -1,20 +1,21 @@
-using SweetLib.Devices;
+using SweetLib.Generator.Attributes;
+using SweetLib.Generator.Enums;
+using SweetEngine.Core;
 using ImGuiNET;
 
 namespace SweetEngine.Editor.Windows;
 
-public static unsafe class DebugWindow
-{
-    public static Mouse* Mouse;
-    public static Window* Window;
-    
-    public static void DrawImpl()
+[Window]
+public unsafe struct DebugWindow
+{    
+    [Stage(EditorStages.Draw)]
+    public readonly void Draw(in EngineContext context)
     {
         ImGui.Begin("Debug");
 
         ImGui.Text($"Application average {1000f / ImGui.GetIO().Framerate:F3} ms/frame ({ImGui.GetIO().Framerate:F1} FPS)");
-        ImGui.Text($"Cursor pos: {Mouse->Position}");
-        ImGui.Text($"Window size: {Window->Size}");
+        ImGui.Text($"Cursor pos: {context.Device->Mouse.Position}");
+        ImGui.Text($"Window size: {context.Device->Window.Size}");
         ImGui.End();
     }
 }

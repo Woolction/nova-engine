@@ -1,22 +1,25 @@
 using SweetEngine.MDI.Mixers;
 using SweetEngine.Resources;
+using SweetEngine.Core;
 using System.Numerics;
 using ImGuiNET;
+using SweetLib.Generator.Attributes;
+using SweetLib.Generator.Enums;
 
 namespace SweetEngine.Editor.Windows;
 
-public static unsafe class SceneWindow
+[Window]
+public unsafe struct SceneWindow
 {
     private static FrameBuffer* frameBuffer;
-    private static CameraMixer* CameraMixer;
 
-    public static void Depends(FrameBuffer* frameBuffer, CameraMixer* CameraMixer)
+    public static void Depends(FrameBuffer* frameBuffer)
     {
-        SceneWindow.CameraMixer = CameraMixer;
         SceneWindow.frameBuffer = frameBuffer;
     }
 
-    public static void DrawImpl()
+    [Stage(EditorStages.Draw)]
+    public readonly void Draw(in EngineContext context)
     {
         ImGui.Begin("Scene");
 
@@ -61,11 +64,11 @@ public static unsafe class SceneWindow
 
                 frameBuffer->Resize(vpX, vpY, vpW, vpH);
             
-                CameraMixer->Aspect = w / h;
+                context.Mixer->Life.cameraMixer.Aspect = w / h;
             }
 
-        CameraMixer->Aspect = w / h;
-        CameraMixer->Aspect = (float)width / height;
+        context.Mixer->Life.cameraMixer.Aspect = w / h;
+        context.Mixer->Life.cameraMixer.Aspect = (float)width / height;
     }
 
     ImGui.Image((nint) frameBuffer->Color.Id, size, new Vector2(0, 1), new Vector2(1, 0));

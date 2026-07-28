@@ -1,11 +1,15 @@
-using SweetLib.Devices;
+using SweetLib.Generator.Attributes;
+using SweetLib.Generator.Enums;
+using SweetEngine.Core;
 using ImGuiNET;
 
 namespace SweetEngine.Editor.Windows;
 
-public static class HierarchyWindow
+[Window]
+public struct HierarchyWindow
 {
-    public static void DrawImpl()
+    [Stage(EditorStages.Draw)]
+    public readonly void Draw(in EngineContext context)
     {
         ImGui.Begin("Hierarchy");
 

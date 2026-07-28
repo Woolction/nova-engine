@@ -1,35 +1,44 @@
-using SweetLib.Collections.Unsafe.List;
-using SweetEngine.Core.APIs;
+using SweetEngine.Core;
 using ImGuiNET;
 
 namespace SweetEngine.Editor.Windows;
 
-public unsafe struct DockSpace : IDisposable
+/// <summary>
+///     this code was automatically generated
+/// </summary>
+public readonly unsafe struct DockSpace
 {
-    public readonly UnsafeList<EditorWindowAPI> Windows;
+    private readonly HierarchyWindow hierarchyWindow;
+    private readonly InspectorWindow inspectorWindow;
+    private readonly ConsoleWindow consoleWindow;
+    private readonly DebugWindow debugWindow;
+    private readonly SceneWindow sceneWindow;
+    private readonly GameWindow gameWindow;
 
     public DockSpace()
     {
-        Windows = new UnsafeList<EditorWindowAPI>(10);
-
-        Windows.Add(new EditorWindowAPI() { Draw = &SceneWindow.DrawImpl });
-        Windows.Add(new EditorWindowAPI() { Draw = &GameWindow.DrawImpl });
-        Windows.Add(new EditorWindowAPI() { Draw = &HierarchyWindow.DrawImpl });
-        Windows.Add(new EditorWindowAPI() { Draw = &InspectorWindow.DrawImpl });
-        Windows.Add(new EditorWindowAPI() { Draw = &ConsoleWindow.DrawImpl });
-        Windows.Add(new EditorWindowAPI() { Draw = &DebugWindow.DrawImpl });
+        hierarchyWindow = new();
+        inspectorWindow = new();
+        consoleWindow = new();
+        debugWindow = new();
+        sceneWindow = new();
+        gameWindow = new();
     }
 
-    public void Draw()
+    public void Draw(in EngineContext context)
     {
         ImGui.DockSpaceOverViewport(ImGui.GetID("main_dock_space"), ImGui.GetMainViewport());
 
-        for (uint i = 0; i < Windows.Length; i++)
-            Windows[i].Draw();
+        hierarchyWindow.Draw(in context);
+        inspectorWindow.Draw(in context);
+        consoleWindow.Draw(in context);
+        debugWindow.Draw(in context);
+        gameWindow.Draw(in context);
+        sceneWindow.Draw(in context);
     }
 
     public void Dispose()
     {
-        Windows.Dispose();
+        
     }
 }

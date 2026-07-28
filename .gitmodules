@@ -13,3 +13,6 @@
 [submodule "libraries/sweetlib-graphics"]
 	path = libraries/sweetlib-graphics
 	url = https://github.com/zynres/sweetlib-graphics.git
+[submodule "libraries/sweetlib-generator"]
+	path = libraries/sweetlib-generator
+	url = https://github.com/zynres/sweetlib-generator.git

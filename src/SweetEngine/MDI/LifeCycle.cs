@@ -10,10 +10,15 @@ namespace SweetEngine.MDI;
 /// </summary>
 public unsafe partial struct LifeCycle
 {
-    public CameraMixer* cameraMixer;
+    public CameraMixer cameraMixer;
+
+    public LifeCycle()
+    {
+        cameraMixer = new();
+    }
 
     public void Whip(in EngineContext context)
     {
-        cameraMixer->Whip(in *context.Intent, in context.Device->Time, in context.Device->Mouse);
+        cameraMixer.Whip(in *context.Intent, in context.Device->Time, in context.Device->Mouse);
     }
 }

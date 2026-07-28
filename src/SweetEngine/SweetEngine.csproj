@@ -21,5 +21,7 @@
     <ProjectReference Include="..\..\libraries\sweetlib-collections\src\SweetLib.Collections\SweetLib.Collections.csproj" /> 
     <ProjectReference Include="..\..\libraries\sweetlib-platform\src\SweetLib.Intents\SweetLib.Intents.csproj" /> 
     <ProjectReference Include="..\..\libraries\sweetlib-platform\src\SweetLib.Devices\SweetLib.Devices.csproj" /> 
+    <ProjectReference Include="..\..\libraries\sweetlib-generator\src\SweetLib.Generator\SweetLib.Generator.csproj"
+      OutputItemType="Analyzer"/>
   </ItemGroup>
 </Project>

@@ -5,4 +5,5 @@
 	<Project Path="libraries/sweetlib-platform/src/SweetLib.Devices/SweetLib.Devices.csproj" />
 
 	<Project Path="libraries/sweetlib-collections/src/SweetLib.Collections/SweetLib.Collections.csproj" />
+	<Project Path="libraries/sweetlib-generator/src/SweetLib.Generator/SweetLib.Generator.csproj" />
 </Solution>

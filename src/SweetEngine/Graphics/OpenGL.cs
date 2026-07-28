@@ -13,7 +13,6 @@ namespace SweetEngine.Graphics;
 
 public unsafe static class OpenGL
 {
-    public static CameraMixer* cameraMixer;
     public static FrameBuffer* frameBuffer;
 
     private static Matrix4x4 view;
@@ -58,11 +57,13 @@ public unsafe static class OpenGL
 
     public static void AfterBefore(in EngineContext context)
     {
-        view = Matrix4x4.CreateLookAt(cameraMixer->Transform.Position, cameraMixer->Transform.Position + cameraMixer->Transform.GetForward(), Vector3.UnitY);
-        proj = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI / 4f, cameraMixer->Aspect, 0.1f, 1000f);
+        ref readonly CameraMixer cameraMixer = ref context.Mixer->Life.cameraMixer;
+
+        view = Matrix4x4.CreateLookAt(cameraMixer.Transform.Position, cameraMixer.Transform.Position + cameraMixer.Transform.GetForward(), Vector3.UnitY);
+        proj = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI / 4f, cameraMixer.Aspect, 0.1f, 1000f);
 
         context.Resource->ShaderLoader.Use(context.Resource->Shader);
-        context.Resource->ShaderLoader.SetVector3(context.Resource->Shader, "uViewPos", cameraMixer->Transform.Position);
+        context.Resource->ShaderLoader.SetVector3(context.Resource->Shader, "uViewPos", cameraMixer.Transform.Position);
     }
 
     public static void Render(in EngineContext context)

@@ -4,7 +4,6 @@ using SweetEngine.Editor;
 using SweetLib.Intents;
 using SweetLib.Devices;
 using SweetEngine.MDI;
-using SweetEngine.Core.APIs;
 
 namespace SweetEngine.Core;
 
