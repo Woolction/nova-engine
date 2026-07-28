@@ -1,6 +1,7 @@
-using SweetEngine.IO.Loaders;
+using SweetLib.Collections.Unsafe.Dictionary;
+using SweetLib.Collections.Unsafe.Text;
 using SweetEngine.Resources.Shaders;
-using SweetLib.Devices;
+using SweetEngine.IO.Loaders;
 
 namespace SweetEngine.Resources;
 
@@ -9,7 +10,7 @@ public struct ResourceManager
     public TextureLoader TextureLoader;
     public ShaderLoader ShaderLoader;
 
-    public Dictionary<string, ObjLoader> MeshLoaders;
+    public UnsafeDictionary<U8String, ObjLoader> MeshLoaders;
 
     public Shader Shader;
 
@@ -25,7 +26,8 @@ public struct ResourceManager
         Shader = new(
             in ShaderLoader, in shader.vertexSrc, in shader.fragmentSrc);
 
-        MeshLoaders[".obj"] = new ObjLoader();
+        MeshLoaders[".obj"u8] = new ObjLoader();
+
         TextureLoader = new();
     }
 
@@ -33,5 +35,12 @@ public struct ResourceManager
     {
         TextureLoader.Dispose();
         Shader.Dispose(in ShaderLoader);
+        
+        for (uint i = 0; i < MeshLoaders.Length; i++)
+        {
+            MeshLoaders.Get(i).Key.Dispose();
+        }
+        
+        MeshLoaders.Dispose();
     }
 }
